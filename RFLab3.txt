@@ -1,0 +1,41 @@
+import os, sys, optparse
+from posixpath import split
+device_check = "[Device Install (Hardware initiated) - SWD"
+section_start = "Section start"
+ 
+def txtLog (file_path):
+    Vendor_ID = ""
+    Product_ID = ""
+    Revision = ""
+    Serial_Number = ""
+    Section_Start = ""
+   
+    log_doc = open(file_path, "r")
+    line = log_doc.readline()
+   
+    for line in log_doc:
+        if device_check in line:
+            lineSplit = (line.split('#'))
+            splitAgain = (lineSplit[1].split('&'))
+            Vendor_ID = splitAgain[1]
+            Product_ID = splitAgain[2]
+            Serial_Number = lineSplit[2]
+            print(Vendor_ID, Product_ID, Revision, Serial_Number)
+            print(next(log_doc))
+           
+           
+
+if __name__ == "__main__":
+    parser = optparse.OptionParser("Usage: python <script_name> -f <file>")
+    parser.add_option("-f", dest="file", type="string", help="please provide full path to the document")
+
+    (options, args) = parser.parse_args()
+
+    path = options.file
+    if not path:
+        print("please provide full path to the document")
+        sys.exit(parser.usage)
+    if path.endswith(".log"):
+        txtLog(path)
+    else:
+        print("File extension not supported/recognized... Make sure the file has the correct extension...")
